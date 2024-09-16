@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отправка письма с файлом</title>
+</head>
+<body>
+    <h1>Завантажити данні роботодавців у базу</h1>
+    <form id="loadEmploersForm" enctype="multipart/form-data">
+        <label for="file">Загрузить файл csv:</label>
+        <input type="file" id="file" name="file" required><br><br>
+
+        <button type="submit">Завантажити</button>
+    </form>
+
+    <h1 style="padding-top: 80px;">Отправка письма с файлом по списку из базы работодателей</h1>
+    <form id="emailForm" enctype="multipart/form-data">
+        
+        <label for="file">Загрузить файл:</label>
+        <input type="file" id="fileCV" name="fileCV" required><br><br>
+
+        <button type="submit">Отправить письмо</button>
+    </form>
+
+    <script>
+        document.getElementById('loadEmploersForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('file', document.getElementById('file').files[0]);
+
+            try {
+                const response = await fetch('/load-employers', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                alert('Ошибка при обновлении базы данных');
+            }
+        });
+
+        document.getElementById('emailForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('fileCV', document.getElementById('fileCV').files[0]);
+
+            try {
+                const response = await fetch('/send-email', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                alert('Ошибка при отправке письма');
+            }
+        });
+    </script>
+</body>
+</html>
